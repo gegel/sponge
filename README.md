@@ -4,14 +4,14 @@ sponge
 Portable C implementation of universal Sponge construction based on compact Keccak source code
 
 ********************************************************************
-Sponge based compact portable C cryptographic library
-Author: "Van Gegel" <gegelcopy@ukr.net>
-Date: 12-03-2014
+Sponge based compact portable C cryptographic library.
+Author: "Van Gegel" <torfone@ukr.net>.
+Date: 12-03-2014.
 THIS IS A FREE SOFTWARE  AND FOR TEST ONLY!!!
-Please do not use it in the case of life and death
+Please do not use it in the case of life and death.
 This software is released under GNU LGPL:
 
-* LGPL 3.0 <http://www.gnu.org/licenses/lgpl.html>
+* LGPL 3.0 <http://www.gnu.org/licenses/lgpl.html>.
 You're free to copy, distribute and make commercial use
 of this software under the following conditions:
 * You have to cite the author (and copyright owner): Van Gegel
