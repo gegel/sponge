@@ -63,6 +63,7 @@ SP_NOABS - input data are not absorbed, despite the presence of the input buffer
 SP_FORCE - forces the absorption of the some zero bytes to achieve full block 
 SP_FORGET - replaces much of the state to zero bytes then permute making it impossible to restore the previous state
 The parameters can be combined to provide required request of Sponge object.
+
 --------------------------------------------------------------------
 void Sponge_finalize(KECCAK512_DATA *keccak, BYTE *tag, int taglen);
 --------------------------------------------------------------------
