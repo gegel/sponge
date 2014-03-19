@@ -29,16 +29,14 @@ Some test vectors for checking code integrity: http://keccak.noekeon.org/KeccakK
 Only three procedures provide functionality to set parameters:
 
 --------------------------------------------------------------------
-void Sponge_init(KECCAK512_DATA *keccak, 
-const BYTE *key, int klen, const BYTE *header, int hlen);
+void Sponge_init(KECCAK512_DATA *keccak, const BYTE *key, int klen, const BYTE *header, int hlen);
 --------------------------------------------------------------------
 During initialization Sponge absorb key (universal key, key-material, seed, nonce, vector, key-info, prefix etc.) and then header (only for SpongeWrap mode).  Both key length and header length can be up to 71 bytes otherwise be truncated to this length.
 If the key  is not specified  or keylen is 0  the Sponge object is only initialized otherwise performed  F-permutation after absorbing the key.
 If the both key and header  are  specified  will be performed two F-permutation separately for each parameter. In this case  the frame bit  (0 for key and 1 for header)  will be added before padding as defined in SpongeWrap mode.
 
 --------------------------------------------------------------------
-int Sponge_data(KECCAK512_DATA *keccak, const BYTE *buffer, 
-int len, BYTE *output, char mode);
+int Sponge_data(KECCAK512_DATA *keccak, const BYTE *buffer, int len, BYTE *output, char mode);
 --------------------------------------------------------------------
 This is the Sponge Object request type defined by the specified parameters.
 Parameter  len  determines the length of data stream processed by Sponge object in current request.
