@@ -1,7 +1,7 @@
  ///////////////////////////////////////////////
 //
 // **************************
-// ** ENGLISH - 14/03/2013 **
+// ** ENGLISH - 04/04/2014 **
 //
 // Project/Software name: sponge.lib
 // Author: "Van Gegel" <gegelcopy@ukr.net>
@@ -42,9 +42,12 @@
 
 static KECCAK512_DATA sponge;
 static unsigned avaliable = 0;
-static char mutex=1;
 
-//Sponge state protection
+//---------------------------------------------------------
+//Sponge state protection for multitread realization only
+//Better use system-dependent mutex support insteed this
+static volatile char mutex=1;
+
 void waitMutex(void)
 {
  do
@@ -56,6 +59,12 @@ void waitMutex(void)
   mutex++;
  }while(mutex!=1);
 }
+
+void releaseMutex(void)
+{
+ mutex=0;   //release mutex: PRG is ready now
+}
+//----------------------------------------------------
 
 //PRG initialization using external and system seeds
 int randInit(uchar const *seed, int len)
@@ -101,7 +110,7 @@ int randInit(uchar const *seed, int len)
   if(sponge.bytesInQueue) avaliable=0; //no randoms avaliable now: seed not comletely processed yet
  }
  memset(sysrand, 0, sizeof(sysrand)); //Clears sysrand
- mutex=0;   //release mutex: PRG is ready now
+ releaseMutex();   //release mutex: PRG is ready now
  return ret;
 }
 
@@ -114,7 +123,7 @@ void randFeed(uchar const *seed, int len)
  //some bytes of seed can remained in sponge state - not all seed processed
  if(sponge.bytesInQueue>0) avaliable=0; //in this case no random bytes avaliable yet
  else avaliable=RATE; //otherwise a full block of random is avaliable
- mutex=0;
+ releaseMutex();
 }
 
 //PRG feed request (generates random)
@@ -134,7 +143,7 @@ void randFetch(uchar *randout, int len)
   Sponge_data(&sponge, 0, 0, 0, SP_DUPLEX|SP_FORCE); //permute state for get new block of avaliable random data
   avaliable=RATE;
  }
- mutex=0;
+ releaseMutex();
 }
 
 //PRG forgen request
@@ -143,7 +152,7 @@ void randForget(void)
  waitMutex();
  Sponge_data(&sponge, 0, 0, 0, SP_FORGET); //forgets state
  avaliable=RATE;
- mutex=0;
+ releaseMutex();
 }
 
 //PRG securety destroy
