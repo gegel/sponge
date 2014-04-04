@@ -1,7 +1,7 @@
  ///////////////////////////////////////////////
 //
 // **************************
-// ** ENGLISH - 14/03/2013 **
+// ** ENGLISH - 04/04/2014 **
 //
 // Project/Software name: sponge.lib
 // Author: "Van Gegel" <gegelcopy@ukr.net>
@@ -311,7 +311,8 @@ int Sponge_data(KECCAK512_DATA *keccak, const BYTE *buffer, int len, BYTE *outpu
 {
         const BYTE * src; //source for absorbing
         int rate; //block size
-
+        unsigned char c; //temporary output
+        
         //check for Final
         if (keccak->bytesInQueue < 0) return keccak->bytesInQueue; // Final() already called
 
@@ -355,13 +356,13 @@ int Sponge_data(KECCAK512_DATA *keccak, const BYTE *buffer, int len, BYTE *outpu
 	{
                 if(output)
                 { //Outputs current state (squeezing)
-                 *(output) = keccak->state[keccak->bytesInQueue];
+                 c = keccak->state[keccak->bytesInQueue];
                  //Duplexing: xores sponges output and  input data
-                 if(buffer) *(output) ^= (*(buffer));
+                 if(buffer) c ^= (*(buffer));
                 }
 
                 //Select source for absorbing
-        if(mode&2) src=output; //Decryption: sponge absorbing output (plaintext)
+        if(mode&2) src=&c; //Decryption: sponge absorbing output (plaintext)
         else if(mode&0x20) src=keccak->state; //Forgeting mode: state^state=0
         else if(mode&0x40) src=0; //Force no absorbing
         else src=buffer; //Encryption: sponge absorbing input (also planetext)
@@ -370,7 +371,10 @@ int Sponge_data(KECCAK512_DATA *keccak, const BYTE *buffer, int len, BYTE *outpu
 		if(src) keccak->state[keccak->bytesInQueue] ^= *(src);
 
                 //Next byte for processing
-                if(output) output++;
+                if(output) {
+                 *(output) = c;
+                 output++;
+                }
                 if(buffer) buffer++;
                 keccak->bytesInQueue++;
 
@@ -405,6 +409,7 @@ int Sponge_data(KECCAK512_DATA *keccak, const BYTE *buffer, int len, BYTE *outpu
         else return(rate - keccak->bytesInQueue);
 
 }
+
 
 //Final squeezing for tag generation and securety destroying of sponges state
 void Sponge_finalize(KECCAK512_DATA *keccak, BYTE *tag, int taglen)
